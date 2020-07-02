@@ -1,4 +1,4 @@
-#angular-6-material-flex-coursera
+# angular-6-material-flex-coursera
 ___
 Repository focused on storing up angular6, angular material and angular flex layout exercises and tips like for future consulting and studying purposes
 
