@@ -1,3 +1,7 @@
+#angular-6-material-flex-coursera
+___
+Repository focused on storing up angular6, angular material and angular flex layout exercises and tips like for future consulting and studying purposes
+
 # ConFusion
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.1.
