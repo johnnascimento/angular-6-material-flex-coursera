@@ -12,5 +12,13 @@ export class DishService {
     return DISHES;
   }
 
+  getDish(id: string): Dish {
+    return DISHES.filter((dish) => { (dish.id === id) })[0];
+  }
+
+  getFeaturedDish() {
+    return DISHES.filter((dish) => dish.featured)[0];
+  }
+
   constructor() { }
 }
