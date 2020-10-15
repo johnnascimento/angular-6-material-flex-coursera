@@ -10,6 +10,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms'; 
 
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
@@ -43,13 +47,17 @@ import { LoginComponent } from './login/login.component';
     BrowserModule,
     BrowserAnimationsModule,
     MatToolbarModule,
+    MatFormFieldModule, 
+    MatInputModule,
+    MatCheckboxModule,
     MatListModule,
     MatGridListModule,
     MatCardModule,
     MatButtonModule,
     FlexLayoutModule,
     AppRoutingModule,
-    MatDialogModule
+    MatDialogModule,
+    FormsModule
   ],
   providers: [
     DishService,
