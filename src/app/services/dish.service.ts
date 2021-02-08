@@ -7,24 +7,23 @@ import { DISHES } from '../shared/dishes';
   providedIn: 'root'
 })
 export class DishService {
+  constructor() { }
 
-  getDishes(): Dish[] {
-    return DISHES;
+  getDishes(): Promise<Dish[]> {
+    return Promise.resolve(DISHES);
   }
 
-  getDish(id: string): Dish {
-    let selectedDish = DISHES.filter((dish) => {
+  getDish(id: string): Promise<Dish> {
+    let selectedDish = Promise.resolve(DISHES.filter((dish) => {
       if(dish.id === id) {
         return dish;
       }
-    })[0];
+    })[0]);
 
     return selectedDish;
   }
 
-  getFeaturedDish() {
-    return DISHES.filter((dish) => dish.featured)[0];
+  getFeaturedDish(): Promise<Dish> {
+    return Promise.resolve(DISHES.filter((dish) => dish.featured)[0]);
   }
-
-  constructor() { }
 }

@@ -8,22 +8,22 @@ import { LEADERS } from '../shared/leaders';
 })
 export class LeaderService {
 
-  getLeaders(): Leader[] {
-    return LEADERS;
+  getLeaders(): Promise<Leader[]> {
+    return Promise.resolve(LEADERS);
   }
 
-  getLeader(id: string): Leader {
-    let selectedDish = LEADERS.filter((leader) => {
+  getLeader(id: string): Promise<Leader> {
+    let selectedDish = Promise.resolve(LEADERS.filter((leader) => {
       if(leader.id === id) {
         return leader;
       }
-    })[0];
+    })[0]);
 
     return selectedDish;
   }
 
-  getFeaturedLeader() {
-    return LEADERS.filter((leader) => leader.featured)[0];
+  getFeaturedLeader(): Promise<Leader> {
+    return Promise.resolve(LEADERS.filter((leader) => leader.featured)[0]);
   }
 
   constructor() { }
