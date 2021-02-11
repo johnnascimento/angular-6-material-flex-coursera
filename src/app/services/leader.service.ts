@@ -12,25 +12,25 @@ export class LeaderService {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(LEADERS);
-      });
+      }, 2000);
     });
   }
 
   getLeader(id: string): Promise<Leader> {
-    let selectedDish = new Promise(resolve => {
-      setTimeout(() => {
-        resolve(LEADERS.filter((leader) => { if (leader.id === id) { return leader; } })[0]);
-      })
-    })
+    return new Promise(resolve => {
+      let selectedDish = LEADERS.filter((leader) => { if (leader.id === id) { return leader; } })[0];
 
-    return selectedDish;
+      setTimeout(() => {
+        resolve(selectedDish);
+      }, 2000)
+    })
   }
 
   getFeaturedLeader(): Promise<Leader> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(LEADERS.filter((leader) => leader.featured)[0]);
-      })
+      }, 2000)
     })
   }
 

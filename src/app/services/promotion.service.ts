@@ -11,7 +11,7 @@ export class PromotionService {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(PROMOTIONS);
-      })
+      }, 2000)
     })
   }
 
@@ -19,7 +19,7 @@ export class PromotionService {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(PROMOTIONS.filter((promo) => { (promo.id === id) })[0]);
-      });
+      }, 2000);
     });
   }
 
@@ -27,7 +27,7 @@ export class PromotionService {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(PROMOTIONS.filter((promo) => promo.featured)[0]);
-      });
+      }, 2000);
     });
   }
 
