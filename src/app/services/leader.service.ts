@@ -9,21 +9,29 @@ import { LEADERS } from '../shared/leaders';
 export class LeaderService {
 
   getLeaders(): Promise<Leader[]> {
-    return Promise.resolve(LEADERS);
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(LEADERS);
+      });
+    });
   }
 
   getLeader(id: string): Promise<Leader> {
-    let selectedDish = Promise.resolve(LEADERS.filter((leader) => {
-      if(leader.id === id) {
-        return leader;
-      }
-    })[0]);
+    let selectedDish = new Promise(resolve => {
+      setTimeout(() => {
+        resolve(LEADERS.filter((leader) => { if (leader.id === id) { return leader; } })[0]);
+      })
+    })
 
     return selectedDish;
   }
 
   getFeaturedLeader(): Promise<Leader> {
-    return Promise.resolve(LEADERS.filter((leader) => leader.featured)[0]);
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(LEADERS.filter((leader) => leader.featured)[0]);
+      })
+    })
   }
 
   constructor() { }
