@@ -1,4 +1,10 @@
-<div class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+<div class="container"
+    fxLayout="row"
+    fxLayout.sm="column"
+    fxLayout.xs="column"
+    fxLayoutAlign.gt-md="space-around center"
+    fxLayoutGap="10px"
+    fxLayoutGap.xs="0" *ngIf="dish">
     <div fxFlex="100">
         <div>
             <h3>{{dish.name | uppercase}}</h3>
@@ -43,4 +49,8 @@
             </mat-list-item>
         </mat-list>
     </div>
+</div>
+
+<div [hidden]="dishs" class="justify-content-center">
+    <mat-spinner></mat-spinner><h4>Loading . . . Please Wait</h4>
 </div>
