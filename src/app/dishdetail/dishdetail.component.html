@@ -55,11 +55,11 @@
 		<p>{{ dishDetailFeedbackForm.value.rating }}</p>
 		<p>{{ dishDetailFeedbackForm.value.message }}</p>
 
-		<form novalidate [formGroup]="dishDetailFeedbackForm" (ngSubmit)="onSubmit()">
+		<form novalidate [formGroup]="dishDetailFeedbackForm" (ngSubmit)="onSubmit()" #dishfform="ngForm">
 		  <p>
 			<mat-form-field class="full-width">
-			  <input matInput formControlName="username" placeholder="First Name" type="text" required>
-			  <mat-error *ngIf="formErrors.username">{{formErrors.username}}</mat-error>
+			  <input matInput formControlName="author" placeholder="Name" type="text" required>
+			  <mat-error *ngIf="formErrors.author">{{formErrors.author}}</mat-error>
 			</mat-form-field>
 		  </p>
 		  <p>
@@ -67,8 +67,8 @@
 		  </p>
 		  <p>
 			<mat-form-field class="full-width">
-			  <textarea matInput formControlName="message" placeholder="Your Feedback" rows=12 required></textarea>
-			  <mat-error *ngIf="formErrors.message">{{formErrors.messages}}</mat-error>
+			  <textarea matInput formControlName="comment" placeholder="Comment" rows=12 required></textarea>
+			  <mat-error *ngIf="formErrors.comment">{{formErrors.comment}}</mat-error>
 			</mat-form-field>
 		  </p>
 		  <button type="submit" mat-button class="background-primary text-floral-white">Submit</button>

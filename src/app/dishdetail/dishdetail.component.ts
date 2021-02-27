@@ -14,7 +14,7 @@ import { DishDetailFeedback } from '../shared/dishDetailFeedBack';
 })
 export class DishdetailComponent implements OnInit {
 
-    @ViewChild('fform') feedbackFormDirective;
+    @ViewChild('dishfform') feedbackFormDirective;
 
     dish: Dish;
     dishIds: string[];
@@ -25,19 +25,19 @@ export class DishdetailComponent implements OnInit {
     dishDetailFeedback: DishDetailFeedback;
 
     formErrors = {
-        'username': '',
-        'message': ''
+        'author': '',
+        'comment': ''
     };
 
     validationMessages = {
-        'username': {
+        'author': {
             'required':      'Name is required.',
             'minlength':     'Name must be at least 2 characters long.',
             'maxlength':     'Name cannot be more than 25 characters long.'
         },
-        'message': {
+        'comment': {
             'required':      'Message is required.',
-            'minlength':     'Message must contain at least 1 character long.',
+            'minlength':     'Message must be at least 2 characters long.',
         }
     };
 
@@ -49,11 +49,12 @@ export class DishdetailComponent implements OnInit {
         this.createForm();
     }
 
-    createForm() {
+    createForm(): void {
         this.dishDetailFeedbackForm = this.fb.group({
-            username: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)] ],
+            author: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)] ],
             rating: 0,
-            message: ['', [Validators.required, Validators.minLength(1)] ],
+            comment: ['', [Validators.required, Validators.minLength(2)] ],
+            date: new Date().toISOString()
         });
 
         this.dishDetailFeedbackForm.valueChanges
@@ -68,10 +69,6 @@ export class DishdetailComponent implements OnInit {
         const form = this.dishDetailFeedbackForm;
 
         for (const field in this.formErrors) {
-            console.log('this.formErrors[field]', this.formErrors[field]);
-            console.log('field', field);
-            console.log('this.formErrors.hasOwnProperty(field)', this.formErrors.hasOwnProperty(field));
-
             if (this.formErrors.hasOwnProperty(field)) {
                 // clear previous error message (if any)
                 this.formErrors[field] = '';
@@ -90,23 +87,35 @@ export class DishdetailComponent implements OnInit {
         }
     }
 
-    onSubmit() {
-        this.dishDetailFeedback = this.dishDetailFeedbackForm.value;
-        console.log(this.dishDetailFeedback);
-
-        this.dishDetailFeedbackForm.reset({
-            username: '',
+    resetFormInputs(formValue) {
+        formValue.reset({
+            author: '',
             rating: '',
-            message: ''
+            comment: '',
+            date: ''
         });
 
         this.feedbackFormDirective.resetForm();
     }
 
+    insertComment(data?) {
+        this.dish.comments.push(data);
+    }
+
+    onSubmit() {
+        this.dishDetailFeedback = this.dishDetailFeedbackForm.value;
+
+        if(!this.dishDetailFeedbackForm.invalid) {
+            this.insertComment(this.dishDetailFeedback);
+
+            this.resetFormInputs(this.dishDetailFeedbackForm);
+        }
+    }
+
     ngOnInit() {
         const id = this.route.snapshot.params['id'];
         this.dishService.getDish(id)
-        .subscribe((dish) => this.dish = dish);
+            .subscribe((dish) => this.dish = dish);
     }
 
     goBack(): void {
