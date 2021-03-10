@@ -51,9 +51,9 @@
 
 	  <div class="form-size">
 		<h3>Leave a comment bellow</h3>
-		<p>{{ dishDetailFeedbackForm.value.username }}</p>
+		<p>{{ dishDetailFeedbackForm.value.author }}</p>
 		<p>{{ dishDetailFeedbackForm.value.rating }}</p>
-		<p>{{ dishDetailFeedbackForm.value.message }}</p>
+		<p>{{ dishDetailFeedbackForm.value.comment }}</p>
 
 		<form novalidate [formGroup]="dishDetailFeedbackForm" (ngSubmit)="onSubmit()" #dishfform="ngForm">
 		  <p>
