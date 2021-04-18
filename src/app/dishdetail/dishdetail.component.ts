@@ -17,6 +17,7 @@ export class DishdetailComponent implements OnInit {
     @ViewChild('dishfform') feedbackFormDirective;
 
     dish: Dish;
+    errMsg: string;
     dishIds: string[];
     prev: string;
     next: string;
@@ -46,9 +47,7 @@ export class DishdetailComponent implements OnInit {
         private route: ActivatedRoute,
         private location: Location,
         private fb: FormBuilder,
-        @Inject('BaseURL') private BaseURL: string) {
-        this.createForm();
-    }
+        @Inject('BaseURL') private BaseURL: string) {}
 
     createForm(): void {
         this.dishDetailFeedbackForm = this.fb.group({
@@ -114,6 +113,8 @@ export class DishdetailComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.createForm();
+
         const id = this.route.snapshot.params['id'];
         this.dishService.getDish(id)
             .subscribe((dish) => this.dish = dish);
