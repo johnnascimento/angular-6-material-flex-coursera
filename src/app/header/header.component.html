@@ -9,7 +9,7 @@
         </span>
     </a>
 
-    <a mat-button routerLink="/about" routerLinkActive="active">
+    <a mat-button routerLink="/aboutus" routerLinkActive="active">
         <span class="fa fa-info fa-lg">
             About
         </span>
@@ -31,6 +31,11 @@
         <span class="fa fa-address-card fa-lg">
             Services
         </span>
+    </a>
+
+    <span class="flex-spacer"></span>
+    <a mat-button (click)="openLoginForm()">
+        <span class="fa fa-sign-in fa-lg"> Login</span>
     </a>
 </mat-toolbar>
 
