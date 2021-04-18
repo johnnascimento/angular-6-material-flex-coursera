@@ -78,7 +78,12 @@
   </div>
 </div>
 
-<div [hidden]="dish" class="justify-content-center">
+<div [hidden]="dish || errMsg" class="justify-content-center">
   <mat-spinner></mat-spinner>
   <h4>Loading . . . Please Wait</h4>
+</div>
+
+<div fxFlex *ngIf="errMsg">
+  <h1>Error</h1>
+  <p>{{ errMsg }}</p>
 </div>
