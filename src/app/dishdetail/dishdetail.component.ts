@@ -17,6 +17,7 @@ export class DishdetailComponent implements OnInit {
     @ViewChild('dishfform') feedbackFormDirective;
 
     dish: Dish;
+    dishcopy: Dish;
     errMsg: string;
     dishIds: string[];
     prev: string;
@@ -99,7 +100,7 @@ export class DishdetailComponent implements OnInit {
     }
 
     insertComment(data?) {
-        this.dish.comments.push(data);
+        this.dishcopy.comments.push(data);
     }
 
     onSubmit() {
@@ -107,8 +108,17 @@ export class DishdetailComponent implements OnInit {
 
         if(!this.dishDetailFeedbackForm.invalid) {
             this.insertComment(this.dishDetailFeedback);
-
             this.resetFormInputs(this.dishDetailFeedbackForm);
+            this.dishService.putDish(this.dishcopy)
+                .subscribe(dish => {
+                    this.dish = dish;
+                    this.dishcopy = dish;
+                }),
+                errmsg => {
+                    this.dish = null;
+                    this.dishcopy = null;
+                    this.errMsg = <any>errmsg;
+                }
         }
     }
 
@@ -116,8 +126,9 @@ export class DishdetailComponent implements OnInit {
         this.createForm();
 
         this.dishService.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
-        this.route.params.pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-            .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); },
+        this.route.params
+            .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
+            .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); },
                 errmsg => this.errMsg = <any>errmsg);
     }
 
