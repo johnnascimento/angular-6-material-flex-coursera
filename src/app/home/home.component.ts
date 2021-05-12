@@ -1,4 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
+import { flyInOut, expand } from "../animations/app.animation";
 
 import { Dish } from '../shared/dish';
 import { DishService } from '../services/dish.service';
@@ -12,11 +13,22 @@ import { LeaderService } from "../services/leader.service";
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  // tslint:disable-next-line:use-host-property-decorator
+  host: {
+    '[@flyInOut]': 'true',
+    'style': 'display: block;'
+    },
+    animations: [
+        flyInOut(),
+        expand()
+    ]
 })
 export class HomeComponent implements OnInit {
   dish: Dish;
   dishErrMsg: string;
+  promotionErrMsg: string;
+  leaderErrMsg: string;
   promotion: Promotion;
   leader: Leader;
 
@@ -29,12 +41,14 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.dishServices.getFeaturedDish()
       .subscribe((dish) => this.dish = dish,
-        errmsg => this.dishErrMsg = errmsg);
+        errmsg => this.dishErrMsg = <any>errmsg);
 
     this.promotionService.getFeaturedPromotion()
-      .subscribe((promotion) => this.promotion = promotion);
+      .subscribe((promotion) => this.promotion = promotion,
+        errmsg => this.promotionErrMsg = <any>errmsg);
 
       this.leaderService.getFeaturedLeader()
-      .subscribe((leader) => this.leader = leader);
+      .subscribe((leader) => this.leader = leader,
+        errmsg => this.leaderErrMsg = <any>errmsg);
   }
 }
