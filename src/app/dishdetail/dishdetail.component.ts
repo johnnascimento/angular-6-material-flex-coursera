@@ -1,28 +1,45 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { Params, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { switchMap } from 'rxjs/operators';
+import { subscribeOn, switchMap } from 'rxjs/operators';
 import { Dish } from '../shared/dish';
 import { DishService } from '../services/dish.service';
 import { DishDetailFeedback } from '../shared/dishDetailFeedBack';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 
 @Component({
     selector: 'app-dishdetail',
     templateUrl: './dishdetail.component.html',
-    styleUrls: ['./dishdetail.component.scss']
+    styleUrls: ['./dishdetail.component.scss'],
+    animations: [
+        trigger('visibility', [
+            state('shown', style({
+                transform: 'scale(1.0)',
+                opacity: 1
+            })),
+            state('hidden', style({
+                transform: 'scale(0.5)',
+                opacity: 0
+            })),
+            transition('shown => hidden', animate('0.1s ease-in-out')),
+            transition('hidden => shown', animate('0.4s ease-in-out'))
+        ])
+    ]
 })
 export class DishdetailComponent implements OnInit {
 
     @ViewChild('dishfform') feedbackFormDirective;
 
     dish: Dish;
+    dishcopy: Dish;
+    errMsg: string;
     dishIds: string[];
     prev: string;
     next: string;
-
     dishDetailFeedbackForm: FormGroup;
     dishDetailFeedback: DishDetailFeedback;
+    visibility = 'shown';
 
     formErrors = {
         'author': '',
@@ -45,9 +62,8 @@ export class DishdetailComponent implements OnInit {
         private dishService: DishService,
         private route: ActivatedRoute,
         private location: Location,
-        private fb: FormBuilder) {
-        this.createForm();
-    }
+        private fb: FormBuilder,
+        @Inject('BaseURL') private BaseURL: string) {}
 
     createForm(): void {
         this.dishDetailFeedbackForm = this.fb.group({
@@ -99,7 +115,7 @@ export class DishdetailComponent implements OnInit {
     }
 
     insertComment(data?) {
-        this.dish.comments.push(data);
+        this.dishcopy.comments.push(data);
     }
 
     onSubmit() {
@@ -107,15 +123,48 @@ export class DishdetailComponent implements OnInit {
 
         if(!this.dishDetailFeedbackForm.invalid) {
             this.insertComment(this.dishDetailFeedback);
-
             this.resetFormInputs(this.dishDetailFeedbackForm);
+            this.dishService.putDish(this.dishcopy)
+                .subscribe(dish => {
+                    this.dish = dish;
+                    this.dishcopy = dish;
+                }),
+                errmsg => {
+                    this.dish = null;
+                    this.dishcopy = null;
+                    this.errMsg = <any>errmsg;
+                }
         }
     }
 
     ngOnInit() {
-        const id = this.route.snapshot.params['id'];
-        this.dishService.getDish(id)
-            .subscribe((dish) => this.dish = dish);
+        this.createForm();
+
+        this.dishService.getDishIds()
+            .subscribe(dishIds => this.dishIds = dishIds);
+        this.route.params
+            .pipe(
+                switchMap(
+                    (params: Params) => {
+                        this.visibility = 'hidden';
+                        return this.dishService.getDish(params['id']);
+                    }
+                )
+            )
+            .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id);
+                setTimeout(
+                    () => {
+                        this.visibility = 'shown';
+                    }, 1500
+                );
+            },
+            errmsg => this.errMsg = <any>errmsg);
+    }
+
+    setPrevNext(dishId: string) {
+        const index = this.dishIds.indexOf(dishId);
+        this.prev = this.dishIds[(this.dishIds.length + index - 1) % this.dishIds.length];
+        this.next = this.dishIds[(this.dishIds.length + index + 1) % this.dishIds.length];
     }
 
     goBack(): void {
