@@ -4,10 +4,12 @@ export function visibility() {
     return trigger('visibility', [
         state('shown', style({
             transform: 'scale(1.0)',
+            height: 'auto',
             opacity: 1
         })),
         state('hidden', style({
             transform: 'scale(0.5)',
+            height: 0,
             opacity: 0
         })),
         transition('* => *', animate('0.5s ease-in-out'))
@@ -34,5 +36,19 @@ export function expand() {
             style({ transform: 'translateY(-50%)', opacity:0 }),
             animate('200ms ease-in', style({ opacity: 1, transform: 'translateX(0)' }))
         ])
+    ]);
+}
+
+export function slideUpwards() {
+    return trigger('slideUpwards', [
+        state('onCanvas', style({
+            transform: 'translateY(0)',
+            opacity: 1
+        })),
+        state('offCanvas', style({
+            transform: 'translateY(100%)',
+            opacity: 0
+        })),
+        transition('* => *', animate('0.5s ease-in-out'))
     ]);
 }

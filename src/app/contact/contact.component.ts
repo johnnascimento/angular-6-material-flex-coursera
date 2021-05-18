@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FeedbackService } from '../services/feedback.service';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from "../animations/app.animation";
+import { flyInOut, slideUpwards, visibility } from "../animations/app.animation";
+
 
 @Component({
     selector: 'app-contact',
@@ -14,7 +15,9 @@ import { flyInOut } from "../animations/app.animation";
     'style': 'display: block;'
     },
     animations: [
-        flyInOut()
+        flyInOut(),
+        slideUpwards(),
+        visibility()
     ]
 })
 export class ContactComponent implements OnInit {
@@ -26,6 +29,10 @@ export class ContactComponent implements OnInit {
     contactType = ContactType;
     errMsg: string;
     feedbackForm: FormGroup;
+    showSpinner: boolean;
+    showForm: boolean;
+    slideUpwards = 'offCanvas';
+    visibility = 'shown';
     
     formErrors = {
         'firstname': '',
@@ -59,7 +66,10 @@ export class ContactComponent implements OnInit {
         private feedbackService: FeedbackService,
         private fb: FormBuilder,
         @Inject('BaseURL') private BaseURL: string
-        ) {}
+        ) {
+            this.showSpinner = false;
+            this.showForm = true;
+        }
     
     createForm() {
         this.feedbackForm = this.fb.group({
@@ -122,23 +132,50 @@ export class ContactComponent implements OnInit {
 
         return this;
     }
+
+    showFeedbackSaved(data) {
+        this.feedback = data;
+        this.feedbackCopy = data;
+        this.showSpinner = false;
+        this.slideUpwards = 'onCanvas';
+    }
+
+    displayForm() {
+        console.log('display form was invoked');
+
+        setTimeout(function() {
+            console.log('hideFeedbackComment was called');
+
+            this.slideUpwards = 'offCanvas';
+            this.showForm = true;
+            this.visibility = 'shown';
+        }.bind(this), 5000);
+    }
     
     onSubmit() {
         this.feedback = this.feedbackForm.value;
-        this.copyFeedback(this.feedback);
         
         if(!this.feedbackForm.invalid) {
-            this.resetFormInputs(this.feedbackFormDirective);
+            this.showSpinner = true;
+            this.showForm = false;
+            this.visibility = 'hidden';
+
+            this.copyFeedback(this.feedback);
             this.feedbackService.submitFeedback(this.feedbackCopy)
                 .subscribe(feedback => {
-                    this.feedback = feedback;
-                    this.feedbackCopy = feedback;
+                    console.log('Ajax returned', feedback);
+
+                    this.showFeedbackSaved(feedback);
+                    this.displayForm();
+                    
                 }),
                 errmsg => {
                     this.feedback = null;
                     this.feedbackCopy = null;
                     this.errMsg = <any>errmsg;
                 }
+
+            this.resetFormInputs(this.feedbackFormDirective);
         }
     }
 
