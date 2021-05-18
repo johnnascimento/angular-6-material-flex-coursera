@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FeedbackService } from '../services/feedback.service';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut, slideUpwards, visibility } from "../animations/app.animation";
+import { flyInOut, slideUpwards, expand, visibility } from "../animations/app.animation";
 
 
 @Component({
@@ -17,7 +17,8 @@ import { flyInOut, slideUpwards, visibility } from "../animations/app.animation"
     animations: [
         flyInOut(),
         slideUpwards(),
-        visibility()
+        visibility(),
+        expand()
     ]
 })
 export class ContactComponent implements OnInit {
@@ -33,6 +34,7 @@ export class ContactComponent implements OnInit {
     showForm: boolean;
     slideUpwards = 'offCanvas';
     visibility = 'shown';
+    feedbackObj: object = {};
     
     formErrors = {
         'firstname': '',
@@ -164,6 +166,17 @@ export class ContactComponent implements OnInit {
             this.feedbackService.submitFeedback(this.feedbackCopy)
                 .subscribe(feedback => {
                     console.log('Ajax returned', feedback);
+
+                    this.feedbackObj = {
+                        firstname: feedback.firstname,
+                        lastname: feedback.lastname,
+                        agree: feedback.agree,
+                        email: feedback.email,
+                        message: feedback.message,
+                        telnum: feedback.telnum,
+                        contacttype: feedback.contacttype,
+                    };
+
 
                     this.showFeedbackSaved(feedback);
                     this.displayForm();
