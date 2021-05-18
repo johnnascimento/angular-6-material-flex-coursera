@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FeedbackService } from '../services/feedback.service';
 import { Feedback, ContactType } from '../shared/feedback';
 import { flyInOut } from "../animations/app.animation";
 
@@ -20,9 +21,11 @@ export class ContactComponent implements OnInit {
     
     @ViewChild('fform') feedbackFormDirective;
     
-    feedbackForm: FormGroup;
     feedback: Feedback;
+    feedbackCopy: Feedback;
     contactType = ContactType;
+    errMsg: string;
+    feedbackForm: FormGroup;
     
     formErrors = {
         'firstname': '',
@@ -52,12 +55,11 @@ export class ContactComponent implements OnInit {
         },
     };
     
-    constructor(private fb: FormBuilder) {
-        this.createForm();
-    }
-    
-    ngOnInit() {
-    }
+    constructor(
+        private feedbackService: FeedbackService,
+        private fb: FormBuilder,
+        @Inject('BaseURL') private BaseURL: string
+        ) {}
     
     createForm() {
         this.feedbackForm = this.fb.group({
@@ -71,21 +73,25 @@ export class ContactComponent implements OnInit {
         });
         
         this.feedbackForm.valueChanges
-        .subscribe(data => this.onValueChanged(data));
+            .subscribe(data => this.onValueChanged(data));
         
         this.onValueChanged(); // (re)set validation messages now
     }
     
     onValueChanged(data?: any) {
         if (!this.feedbackForm) { return; }
+
         const form = this.feedbackForm;
+
         for (const field in this.formErrors) {
             if (this.formErrors.hasOwnProperty(field)) {
                 // clear previous error message (if any)
                 this.formErrors[field] = '';
                 const control = form.get(field);
+
                 if (control && control.dirty && !control.valid) {
                     const messages = this.validationMessages[field];
+
                     for (const key in control.errors) {
                         if (control.errors.hasOwnProperty(key)) {
                             this.formErrors[field] += messages[key] + ' ';
@@ -95,10 +101,7 @@ export class ContactComponent implements OnInit {
             }
         }
     }
-    
-    onSubmit() {
-        this.feedback = this.feedbackForm.value;
-
+    resetFormInputs(formValue) {
         this.feedbackForm.reset({
             firstname: '',
             lastname: '',
@@ -108,7 +111,38 @@ export class ContactComponent implements OnInit {
             contacttype: 'None',
             message: ''
         });
+        
+        formValue.resetForm();
 
-        this.feedbackFormDirective.resetForm();
+        return this;
+    }
+
+    copyFeedback(feedbackValue) {
+        this.feedbackCopy = feedbackValue;
+
+        return this;
+    }
+    
+    onSubmit() {
+        this.feedback = this.feedbackForm.value;
+        this.copyFeedback(this.feedback);
+        
+        if(!this.feedbackForm.invalid) {
+            this.resetFormInputs(this.feedbackFormDirective);
+            this.feedbackService.submitFeedback(this.feedbackCopy)
+                .subscribe(feedback => {
+                    this.feedback = feedback;
+                    this.feedbackCopy = feedback;
+                }),
+                errmsg => {
+                    this.feedback = null;
+                    this.feedbackCopy = null;
+                    this.errMsg = <any>errmsg;
+                }
+        }
+    }
+
+    ngOnInit() {
+        this.createForm();
     }
 }
